@@ -140,6 +140,41 @@ function formatFileName(
 
   return `${course}_${indicator}_${formattedDate}_${version}`;
 }
+
+/* =========================
+   FORMATEAR FECHA LARGA
+========================= */
+function formatLongDate(dateString) {
+
+  if (!dateString) return "";
+
+  const months = {
+    "01": "ENERO",
+    "02": "FEBRERO",
+    "03": "MARZO",
+    "04": "ABRIL",
+    "05": "MAYO",
+    "06": "JUNIO",
+    "07": "JULIO",
+    "08": "AGOSTO",
+    "09": "SEPTIEMBRE",
+    "10": "OCTUBRE",
+    "11": "NOVIEMBRE",
+    "12": "DICIEMBRE",
+  };
+
+  const [
+    year,
+    month,
+    day,
+  ] = dateString.split("-");
+
+  return `${Number(day)} DE ${months[month]} DE ${year}`;
+}
+
+/* =========================
+   GENERAR HTML PRESENCIAL
+========================= */
 /* =========================
    GENERAR HTML PRESENCIAL
 ========================= */
@@ -149,106 +184,355 @@ function generatePresentialHTML(
 ) {
 
   const course =
-    state.courseName || "Curso";
+    state.courseName || "CURSO";
+
+  const indicator =
+    state.indicator || "";
 
   const date =
-    state.courseDate || "";
+  formatLongDate(
+    state.courseDate
+  );
 
   let html = `
   <html>
 
-    <head>
+  <head>
 
-      <meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-      <style>
+<style>
+
+  @page{
+    margin:8px 24px;
+  }
 
   body{
-    font-family: Arial, sans-serif;
-    padding: 28px 40px;
-    line-height: 1.35;
-    font-size: 12px; /* 🔥 tamaño general */
+  margin:0;
+  padding:0;
+  
+    font-family: "Aptos Narrow", Arial, sans-serif;
+    font-size:10px;
     color:#000;
+    line-height:1.2;
   }
 
-  .header{
-    margin-bottom: 28px;
-  }
+  /* =========================
+     CABECERA GENERAL
+  ========================= */
 
-  .title{
+  .year-title{
+    font-family:"Aptos Narrow", Arial, sans-serif;
     text-align:center;
-    font-size:18px;
+    font-size:10px;
     font-weight:bold;
-    margin-bottom:18px;
-    letter-spacing:1px;
+    margin-bottom:12px;
   }
 
-  .info{
-    margin-bottom:6px;
-    font-size:12px;
+  .header-table{
+    width:100%;
+    border-collapse:collapse;
+    table-layout:fixed;
   }
+
+  .header-table td{
+    border:1px solid #999;
+    vertical-align:middle;
+    padding:5px 8px;
+  }
+
+  .header-left{
+    width:70%;
+    text-align:center;
+    font-family:"Aptos Narrow", Arial, sans-serif;
+  }
+
+  .header-right{
+    width:30%;
+    text-align:center;
+    font-family:"Aptos Narrow", Arial, sans-serif;
+  }
+
+  /* =========================
+     LADO IZQUIERDO
+  ========================= */
+
+  .semester{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:12px;
+    font-weight:bold;
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+
+  .indicator{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    margin-bottom:10px;
+    text-transform:uppercase;
+  }
+
+  .course{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:12px;
+    font-weight:bold;
+    text-transform:uppercase;
+  }
+
+  /* =========================
+     LADO DERECHO
+  ========================= */
+
+  .type-line{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+
+    margin-bottom:10px;
+    font-weight:bold;
+  }
+
+  .type-label{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:11px;
+  }
+
+  .type-value{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:26px;
+    font-weight:bold;
+    line-height:1;
+  }
+
+  .date{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-size:11px;
+    font-weight:bold;
+    text-transform:uppercase;
+  }
+
+  /* =========================
+     INSTRUCCIONES
+  ========================= */
+
+
+.instructions-box{
+  width:100%;
+  border:1px solid #999;
+  border-collapse:collapse;
+
+}
+
+  .instructions-title{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    font-size:9px;
+    font-weight:bold;
+    margin-bottom:4px;
+    letter-spacing:.5px;
+  }
+
+  .instructions-text{
+    font-family: Arial, sans-serif;
+    text-align:center;
+    font-style:italic;
+    font-size:10px;
+    line-height:1.35;
+    margin-bottom:0;
+  }
+
+  /* =========================
+     DATOS ALUMNO
+  ========================= */
+
+  .student-data{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    margin-bottom:16px;
+    font-size:10px;
+  }
+
+  .student-line{
+    margin-bottom:4px;
+  }
+
+  /* =========================
+     TITULO PREGUNTAS
+  ========================= */
+
+  .questions-title{
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-weight:bold;
+    margin-bottom:14px;
+    font-size:10px;
+    text-transform:uppercase;
+  }
+
+  /* =========================
+     CONTENEDOR 2 COLUMNAS
+  ========================= */
+
+  .questions-grid{
+    column-count:2;
+    column-gap:34px;
+  }
+
+  /* =========================
+     PREGUNTA
+  ========================= */
 
   .question{
-    margin-bottom:18px;
-    page-break-inside: avoid;
-  }
-
-  .question-number{
-    font-weight:bold; /* 🔥 numero negrita */
+    break-inside:avoid;
+    margin-bottom:14px;
   }
 
   .statement{
-    font-weight:bold; /* 🔥 enunciado negrita */
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    font-weight:bold;
+    margin-bottom:6px;
+    text-align:justify;
+    font-size:10px;
+    line-height:1.3;
   }
 
+  .question-number{
+    font-weight:bold;
+    margin-right:4px;
+  }
+
+  /* =========================
+     OPCIONES
+  ========================= */
+
   .options{
-  margin-left:0;
-  margin-top:8px;
-}
+    margin-top:4px;
+  }
 
   .option{
-  margin-bottom:4px;
-  font-size:12px;
-  padding-left:0;
-}
+    font-family:"Aptos Narrow", Arial, sans-serif;
+    margin-bottom:2px;
+    font-size:10px;
+    line-height:1.2;
+  }
 
   .option-letter{
-    font-weight:bold; /* 🔥 letra negrita */
+    font-weight:bold;
+    display:inline-block;
+    width:16px;
   }
 
 </style>
 
-    </head>
+  </head>
 
-    <body>
+  <body>
 
-      <div class="header">
+    <div class="year-title">
+      "Año de la Esperanza y el Fortalecimiento de la Democracia"
+    </div>
 
-        <div class="title">
-          EXAMEN ${examLetter}
-        </div>
+    <table class="header-table">
 
-        <div class="info">
-          <strong>Curso:</strong>
-          ${course}
-        </div>
+      <tr>
 
-        <div class="info">
-          <strong>Modalidad:</strong>
-          PRESENCIAL
-        </div>
+        <td class="header-left">
 
-        <div class="info">
-          <strong>Fecha:</strong>
-          ${date}
-        </div>
+          <div class="semester">
+            SEMESTRE ACADÉMICO 2026-I
+          </div>
+
+          <div class="indicator">
+            ${indicator}
+          </div>
+
+          <div class="course">
+            ${course}
+          </div>
+
+        </td>
+
+        <td class="header-right">
+
+          <div class="type-line">
+
+            <span class="type-label">
+              TIPO:
+            </span>
+
+            <span class="type-value">
+              ${examLetter}
+            </span>
+
+          </div>
+
+          <div class="date">
+            ${date}
+          </div>
+
+        </td>
+
+      </tr>
+
+    </table>
+
+    <table style="width:100%;">
+  <tr><td style="height:2px;"></td></tr>
+</table>
+
+   <table class="instructions-box">
+  <tr>
+    <td>
+      <div class="instructions-title">
+        INSTRUCCIONES
+      </div>
+
+      <div class="instructions-text">
+
+        Estimados estudiantes: La evaluación consta de preguntas con alternativas.
+        Lea atentamente cada enunciado y seleccione la respuesta correcta.
+
+       </td>
+  </tr>
+</table>
+
+<table style="width:100%;">
+  <tr><td style="height:12px;"></td></tr>
+</table>
+
+    <div class="student-data">
+
+      <div class="student-line">
+
+        <strong>
+          NOMBRE Y APELLIDOS:
+        </strong>
+
+        _______________________________________________
 
       </div>
+
+      <div class="student-line">
+
+        <strong>
+          CÓDIGO SAP:
+        </strong>
+
+        ______________________
+
+      </div>
+
+    </div>
+
+    <div class="questions-title">
+      RESPONDER LAS SIGUIENTES PREGUNTAS:
+    </div>
+
+    <div class="questions-grid">
   `;
 
   questions.forEach((q, index) => {
 
-    // 🔥 chocolatear alternativas
     const original =
       q.options
         .slice(0, q.optionCount)
@@ -263,43 +547,44 @@ function generatePresentialHTML(
       shuffleArray(original);
 
     html += `
-  <div class="question">
+      <div class="question">
 
-    <div class="statement">
-      <span class="question-number">
-        ${index + 1}.
-      </span>
+        <div class="statement">
 
-      ${q.statement}
-    </div>
+          <span class="question-number">
+            ${index + 1}.
+          </span>
 
-    <div class="options">
-`;
+          ${q.statement}
+
+        </div>
+    `;
 
     shuffled.forEach((opt, i) => {
 
       html += `
-  <div class="option">
+        <div class="option">
 
-    <span class="option-letter">
-      ${getLetter(i)})
-    </span>
+          <span class="option-letter">
+            ${getLetter(i)})
+          </span>
 
-    ${opt.text}
+          ${opt.text}
 
-  </div>
-`;
+        </div>
+      `;
     });
 
     html += `
-        </div>
-
       </div>
     `;
   });
 
   html += `
+      </div>
+
     </body>
+
   </html>
   `;
 
@@ -326,13 +611,33 @@ async function downloadZip(
 
   a.href = url;
 
-  const zipName =
-  formatFileName(
-    "VIRTUAL"
-  );
+  const course =
+  (state.courseName || "CURSO")
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^\w\-]/g, "");
+
+let formattedDate =
+  "000000";
+
+if (state.courseDate) {
+
+  const [
+    year,
+    month,
+    day,
+  ] =
+    state.courseDate.split("-");
+
+  formattedDate =
+    `${day}${month}${year.slice(2)}`;
+}
+
+const zipName =
+  `${course}_${formattedDate}_VIRTUAL.zip`;
 
 a.download =
-  `${zipName}.zip`;
+  zipName;
 
   a.click();
 
@@ -487,44 +792,137 @@ async function exportExam() {
     return;
   }
 
-  /* =========================
-     EXPORT PRESENCIAL
-  ========================= */
+/* =========================
+   EXPORT PRESENCIAL
+========================= */
 
-  const versions =
-    ["A", "B", "C"];
+const versions =
+  ["A", "B", "C"];
 
-  const totalVersions =
-    state.examVersions || 1;
+const totalVersions =
+  state.examVersions || 1;
 
-  for (
-    let i = 0;
-    i < totalVersions;
-    i++
-  ) {
+/* =========================
+   UNA SOLA VERSION
+========================= */
 
-    // 🔥 chocolatear preguntas
-    const shuffledQuestions =
-      shuffleArray([
-        ...questions,
-      ]);
+if (totalVersions === 1) {
 
-    const html =
-      generatePresentialHTML(
-        shuffledQuestions,
-        versions[i],
-      );
+  // 🔥 chocolatear preguntas
+  const shuffledQuestions =
+    shuffleArray([
+      ...questions,
+    ]);
 
-    const fileName =
-  formatFileName(
-    versions[i]
+  const html =
+    generatePresentialHTML(
+      shuffledQuestions,
+      "A",
+    );
+
+  const fileName =
+    formatFileName(
+      "A"
+    );
+
+  downloadDoc(
+    `${fileName}.doc`,
+    html,
   );
 
-downloadDoc(
-  `${fileName}.doc`,
-  html,
-);
-  }
+  return;
+}
+
+/* =========================
+   DOS O MAS VERSIONES
+   → ZIP
+========================= */
+
+const zip =
+  new JSZip();
+
+for (
+  let i = 0;
+  i < totalVersions;
+  i++
+) {
+
+  // 🔥 chocolatear preguntas
+  const shuffledQuestions =
+    shuffleArray([
+      ...questions,
+    ]);
+
+  const html =
+    generatePresentialHTML(
+      shuffledQuestions,
+      versions[i],
+    );
+
+  const fileName =
+    formatFileName(
+      versions[i]
+    );
+
+  // 🔥 agregar DOC al ZIP
+  zip.file(
+    `${fileName}.doc`,
+    html,
+  );
+}
+
+/* =========================
+   NOMBRE ZIP
+========================= */
+
+const course =
+  (state.courseName || "CURSO")
+    .trim()
+    .replace(/\s+/g, "_")
+    .replace(/[^\w\-]/g, "");
+
+let formattedDate =
+  "000000";
+
+if (state.courseDate) {
+
+  const [
+    year,
+    month,
+    day,
+  ] =
+    state.courseDate.split("-");
+
+  formattedDate =
+    `${day}${month}${year.slice(2)}`;
+}
+
+const zipName =
+  `${course}_${formattedDate}_PRESENCIAL.zip`;
+
+/* =========================
+   DESCARGAR ZIP
+========================= */
+
+const content =
+  await zip.generateAsync({
+    type: "blob",
+  });
+
+const url =
+  URL.createObjectURL(content);
+
+const a =
+  document.createElement("a");
+
+a.href = url;
+
+a.download =
+  zipName;
+
+a.click();
+
+URL.revokeObjectURL(url);
 }
 
 export {

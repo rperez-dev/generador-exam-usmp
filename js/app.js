@@ -15,6 +15,10 @@ import {
   initConfig,
 } from "./config.js";
 
+import {
+  bindImport,
+} from "./import.js";
+
 /* =========================
    INIT
 ========================= */
@@ -30,6 +34,8 @@ function init() {
   bindEvents();
 
   bindConfig();
+  
+  bindImport();
 
   document.addEventListener("render-app", render);
 }

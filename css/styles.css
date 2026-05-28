@@ -470,3 +470,191 @@ button {
   overflow: hidden;
   transition: all 0.25s ease;
 }
+
+/* =========================
+   TOOLBAR
+========================= */
+
+.toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  margin-top:24px;
+  flex-wrap:wrap;
+}
+
+.toolbar-left,
+.toolbar-right{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+/* =========================
+   BOTON BASE
+========================= */
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  min-height:46px;
+
+  padding:12px 20px;
+
+  border:none;
+  border-radius:14px;
+
+  font-size:14px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    background .18s ease;
+
+  user-select:none;
+
+  color:white;
+}
+
+/* hover elegante */
+.btn:hover{
+  transform:translateY(-2px);
+
+  box-shadow:
+    0 10px 20px
+    rgba(0,0,0,.12);
+}
+
+/* =========================
+   COLORES
+========================= */
+
+.primary-btn{
+  background:
+    linear-gradient(
+      135deg,
+      #990000,
+      #7d0000
+    );
+}
+
+.primary-btn:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #870000,
+      #690000
+    );
+}
+
+.success-btn{
+  background:
+    linear-gradient(
+      135deg,
+      #c8a44d,
+      #af8d39
+    );
+}
+
+.success-btn:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #b89236,
+      #96752a
+    );
+}
+
+.danger-btn{
+  background:
+    linear-gradient(
+      135deg,
+      #5f5f5f,
+      #474747
+    );
+}
+
+.danger-btn:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #4f4f4f,
+      #383838
+    );
+}
+
+/* =========================
+   IMPORTAR MOODLE
+========================= */
+
+.import-btn{
+  background:
+    linear-gradient(
+      135deg,
+      #eceff1,
+      #d9dee3
+    );
+
+  color:#374151;
+
+  border:1px solid #c7cdd4;
+
+  box-shadow:
+    0 4px 14px
+    rgba(0,0,0,.06);
+}
+
+.import-btn:hover{
+  background:
+    linear-gradient(
+      135deg,
+      #e3e8ed,
+      #cfd6dc
+    );
+
+  box-shadow:
+    0 8px 20px
+    rgba(0,0,0,.10);
+
+  transform:translateY(-2px);
+}
+
+.hidden-file-input{
+  display:none;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px){
+
+  .toolbar{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .toolbar-left,
+  .toolbar-right{
+    width:100%;
+  }
+
+  .toolbar-left{
+    flex-direction:column;
+  }
+
+  .toolbar-right{
+    justify-content:flex-end;
+  }
+
+  .btn{
+    width:100%;
+  }
+}
