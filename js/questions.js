@@ -1,67 +1,37 @@
 import { state } from "./state.js";
 
-import {
-  showAlert,
-  showConfirm,
-} from "./modal.js";
+import { showAlert, showConfirm } from "./modal.js";
 
 import {
-  isQuestionValid,
-  getQuestionStatus,
+  validateExam,
 } from "./validators.js";
 
-import {
-  isDocente,
-} from "./permissions/permissions.js";
+import { isDocente } from "./permissions/permissions.js";
 
-const questionsContainer =
-  document.getElementById(
-    "questionsContainer"
-  );
+const questionsContainer = document.getElementById("questionsContainer");
 
-const counter =
-  document.getElementById(
-    "questionCounter"
-  );
+const counter = document.getElementById("questionCounter");
 
 /* =========================
    CREATE QUESTION
 ========================= */
 
 function getAvailableDifficulty() {
-  const easy =
-    countQuestionsByLevel(
-      "FACIL"
-    );
+  const easy = countQuestionsByLevel("FACIL");
 
-  const medium =
-    countQuestionsByLevel(
-      "INTERMEDIO"
-    );
+  const medium = countQuestionsByLevel("INTERMEDIO");
 
-  const hard =
-    countQuestionsByLevel(
-      "DIFICIL"
-    );
+  const hard = countQuestionsByLevel("DIFICIL");
 
-  if (
-    easy <
-    state.limits.FACIL
-  ) {
+  if (easy < state.limits.FACIL) {
     return "FACIL";
   }
 
-  if (
-    medium <
-    state.limits.INTERMEDIO
-  ) {
+  if (medium < state.limits.INTERMEDIO) {
     return "INTERMEDIO";
   }
 
-  if (
-    hard <
-    state.limits.DIFICIL
-  ) {
+  if (hard < state.limits.DIFICIL) {
     return "DIFICIL";
   }
 
@@ -69,50 +39,26 @@ function getAvailableDifficulty() {
 }
 
 function createQuestion() {
-
-  const optionCount =
-    isDocente()
-      ? 5
-      : 4;
+  const optionCount = isDocente() ? 5 : 4;
 
   return {
-    id:
-      Date.now() +
-      Math.random(),
+    id: Date.now() + Math.random(),
 
     statement: "",
 
-    difficulty:
-      getAvailableDifficulty(),
+    difficulty: getAvailableDifficulty(),
 
     optionCount,
 
-    options:
-      optionCount === 5
-        ? [
-            "",
-            "",
-            "",
-            "",
-            "",
-          ]
-        : [
-            "",
-            "",
-            "",
-            "",
-          ],
+    options: optionCount === 5 ? ["", "", "", "", ""] : ["", "", "", ""],
 
-    correctAnswer:
-      null,
+    correctAnswer: null,
 
-    imageEnabled:
-      false,
+    imageEnabled: false,
 
     image: null,
 
-    collapsed:
-      false,
+    collapsed: false,
   };
 }
 
@@ -120,38 +66,18 @@ function createQuestion() {
    COUNT
 ========================= */
 
-function countQuestionsByLevel(
-  level,
-  excludeId = null,
-) {
+function countQuestionsByLevel(level, excludeId = null) {
   return state.questions.filter(
-    (q) =>
-      q.difficulty ===
-        level &&
-      q.id !==
-        excludeId
+    (q) => q.difficulty === level && q.id !== excludeId,
   ).length;
 }
 
-function canUseLevel(
-  level,
-  excludeId = null,
-) {
-  return (
-    countQuestionsByLevel(
-      level,
-      excludeId
-    ) <
-    state.limits[level]
-  );
+function canUseLevel(level, excludeId = null) {
+  return countQuestionsByLevel(level, excludeId) < state.limits[level];
 }
 
 function getConfiguredTotal() {
-  return (
-    state.limits.FACIL +
-    state.limits.INTERMEDIO +
-    state.limits.DIFICIL
-  );
+  return state.limits.FACIL + state.limits.INTERMEDIO + state.limits.DIFICIL;
 }
 
 /* =========================
@@ -159,69 +85,32 @@ function getConfiguredTotal() {
 ========================= */
 
 function updateCounter() {
+  const easy = countQuestionsByLevel("FACIL");
 
-  const easy =
-    countQuestionsByLevel(
-      "FACIL"
-    );
+  const medium = countQuestionsByLevel("INTERMEDIO");
 
-  const medium =
-    countQuestionsByLevel(
-      "INTERMEDIO"
-    );
+  const hard = countQuestionsByLevel("DIFICIL");
 
-  const hard =
-    countQuestionsByLevel(
-      "DIFICIL"
-    );
-
-  const configuredTotal =
-    getConfiguredTotal();
+  const configuredTotal = getConfiguredTotal();
 
   let completed = 0;
 
-  state.questions.forEach(
-    (q) => {
+  state.questions.forEach((q) => {
+    const visibleOptions = q.options.slice(0, q.optionCount);
 
-      const visibleOptions =
-        q.options.slice(
-          0,
-          q.optionCount
-        );
+    const statementOk = !!q.statement?.trim();
 
-      const statementOk =
-        !!q.statement?.trim();
+    const optionsOk = visibleOptions.every((o) => o?.trim());
 
-      const optionsOk =
-        visibleOptions.every(
-          (o) =>
-            o?.trim()
-        );
+    const answerOk = q.correctAnswer !== null && q.correctAnswer !== undefined;
 
-      const answerOk =
-        q.correctAnswer !==
-          null &&
-        q.correctAnswer !==
-          undefined;
-
-      if (
-        statementOk &&
-        optionsOk &&
-        answerOk
-      ) {
-        completed++;
-      }
-    },
-  );
+    if (statementOk && optionsOk && answerOk) {
+      completed++;
+    }
+  });
 
   const progress =
-    configuredTotal > 0
-      ? Math.round(
-          (completed /
-            configuredTotal) *
-            100
-        )
-      : 0;
+    configuredTotal > 0 ? Math.round((completed / configuredTotal) * 100) : 0;
 
   counter.innerHTML = `
     <div class="counter-item counter-easy">
@@ -265,45 +154,29 @@ function updateCounter() {
 ========================= */
 
 function render() {
-
-  questionsContainer.innerHTML =
-    "";
+  questionsContainer.innerHTML = "";
 
   updateCounter();
 
-  state.questions.forEach(
-    (q, index) => {
+  state.questions.forEach((q, index) => {
+    if (isDocente()) {
+      q.optionCount = 5;
+    }
 
-      if (
-        isDocente()
-      ) {
-        q.optionCount = 5;
-      }
+    const card = document.createElement("div");
 
-      const card =
-        document.createElement(
-          "div"
-        );
+    card.className = "question-card";
 
-      card.className =
-        "question-card";
-
-      card.innerHTML = `
+    card.innerHTML = `
       <div class="question-header">
 
         <div class="question-title">
           <button class="collapse-btn">
-            ${
-              q.collapsed
-                ? "▶"
-                : "▼"
-            }
+            ${q.collapsed ? "▶" : "▼"}
           </button>
 
           <h3>
-            Pregunta ${
-              index + 1
-            }
+            Pregunta ${index + 1}
           </h3>
         </div>
 
@@ -315,11 +188,7 @@ function render() {
 
       <div
         class="question-body"
-        style="display:${
-          q.collapsed
-            ? "none"
-            : "block"
-        }"
+        style="display:${q.collapsed ? "none" : "block"}"
       >
 
         <div class="inline-grid">
@@ -356,11 +225,7 @@ function render() {
 
             <select
               class="option-count"
-              ${
-                isDocente()
-                  ? "disabled"
-                  : ""
-              }
+              ${isDocente() ? "disabled" : ""}
             >
 
               <option value="4">
@@ -383,6 +248,7 @@ function render() {
 
         <textarea
           class="statement"
+          placeholder="Ingrese el enunciado de la pregunta..."
         >${q.statement}</textarea>
 
         <label>
@@ -390,15 +256,9 @@ function render() {
         </label>
 
         ${q.options
-          .slice(
-            0,
-            q.optionCount
-          )
+          .slice(0, q.optionCount)
           .map(
-            (
-              opt,
-              i,
-            ) => `
+            (opt, i) => `
             <div class="option-row">
 
               <input
@@ -406,12 +266,7 @@ function render() {
                 class="correct"
                 data-index="${i}"
                 name="correct-${q.id}"
-                ${
-                  q.correctAnswer ===
-                  i
-                    ? "checked"
-                    : ""
-                }
+                ${q.correctAnswer === i ? "checked" : ""}
               >
 
               <input
@@ -419,9 +274,7 @@ function render() {
                 class="option-text"
                 data-index="${i}"
                 value="${opt}"
-                placeholder="Alternativa ${
-                  i + 1
-                }"
+                placeholder="Alternativa ${i + 1}"
               >
 
             </div>
@@ -432,148 +285,76 @@ function render() {
       </div>
       `;
 
-      /* EVENTS */
+    /* EVENTS */
 
-      card.querySelector(
-        ".difficulty"
-      ).value =
-        q.difficulty;
+    card.querySelector(".difficulty").value = q.difficulty;
 
-      card.querySelector(
-        ".option-count"
-      ).value =
-        q.optionCount;
+    card.querySelector(".option-count").value = q.optionCount;
 
-      card.querySelector(
-        ".statement"
-      ).oninput =
-        (e) => {
-          q.statement =
-            e.target.value;
-          updateCounter();
-        };
+    card.querySelector(".statement").oninput = (e) => {
+      q.statement = e.target.value;
+      updateCounter();
+    };
 
-      card.querySelector(
-        ".option-count"
-      ).onchange =
-        (e) => {
+    card.querySelector(".option-count").onchange = (e) => {
+      if (isDocente()) {
+        return;
+      }
 
-          if (
-            isDocente()
-          ) {
-            return;
-          }
+      const count = Number(e.target.value);
 
-          const count =
-            Number(
-              e.target.value
-            );
+      q.optionCount = count;
 
-          q.optionCount =
-            count;
+      while (q.options.length < count) {
+        q.options.push("");
+      }
 
-          while (
-            q.options
-              .length <
-            count
-          ) {
-            q.options.push(
-              ""
-            );
-          }
+      while (q.options.length > count) {
+        q.options.pop();
+      }
 
-          while (
-            q.options
-              .length >
-            count
-          ) {
-            q.options.pop();
-          }
+      render();
+    };
 
-          render();
-        };
+    card.querySelectorAll(".option-text").forEach((input) => {
+      input.oninput = () => {
+        q.options[input.dataset.index] = input.value;
 
-      card
-        .querySelectorAll(
-          ".option-text"
-        )
-        .forEach(
-          (input) => {
-            input.oninput =
-              () => {
+        updateCounter();
+      };
+    });
 
-                q.options[
-                  input.dataset
-                    .index
-                ] =
-                  input.value;
+    card.querySelectorAll(".correct").forEach((radio) => {
+      radio.onchange = () => {
+        q.correctAnswer = Number(radio.dataset.index);
 
-                updateCounter();
-              };
-          },
-        );
+        updateCounter();
+      };
+    });
 
-      card
-        .querySelectorAll(
-          ".correct"
-        )
-        .forEach(
-          (radio) => {
-            radio.onchange =
-              () => {
+    card.querySelector(".delete-icon").onclick = () => {
+      showConfirm("Eliminar", "¿Eliminar pregunta?", () => {
+        state.questions = state.questions.filter((x) => x.id !== q.id);
 
-                q.correctAnswer =
-                  Number(
-                    radio
-                      .dataset
-                      .index
-                  );
+        if (!state.questions.length) {
+          state.questions.push(createQuestion());
+        }
 
-                updateCounter();
-              };
-          },
-        );
+        render();
+      });
+    };
 
-      card.querySelector(
-        ".delete-icon"
-      ).onclick =
-        () => {
-
-          showConfirm(
-            "Eliminar",
-            "¿Eliminar pregunta?",
-            () => {
-
-              state.questions =
-                state.questions.filter(
-                  (
-                    x,
-                  ) =>
-                    x.id !==
-                    q.id
-                );
-
-              if (
-                !state
-                  .questions
-                  .length
-              ) {
-                state.questions.push(
-                  createQuestion()
-                );
-              }
-
-              render();
-            },
-          );
-        };
-
-      questionsContainer.appendChild(
-        card
-      );
-    },
-  );
+    questionsContainer.appendChild(card);
+  });
 }
+
+/* =========================
+   ADD QUESTION
+========================= */
+
+/* =========================
+   ADD QUESTION
+========================= */
 
 /* =========================
    ADD QUESTION
@@ -581,20 +362,20 @@ function render() {
 
 function addQuestion() {
 
-  const invalid =
-    state.questions.find(
-      (q) =>
-        !isQuestionValid(
-          q
-        )
+  const validation =
+    validateExam(
+      state.questions,
+      state.limits,
+      "ADD",
     );
 
   if (
-    invalid
+    !validation.ok
   ) {
+
     showAlert(
-      "Pregunta incompleta",
-      invalid
+      validation.title,
+      validation.message
     );
 
     return;
@@ -620,9 +401,4 @@ function addQuestion() {
   render();
 }
 
-export {
-  createQuestion,
-  render,
-  addQuestion,
-  updateCounter,
-};
+export { createQuestion, render, addQuestion, updateCounter };

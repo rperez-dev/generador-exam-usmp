@@ -66,8 +66,8 @@ function bindEvents() {
 ========================= */
 function clearExam() {
   showConfirm(
-    "Confirmar limpieza",
-    "¿Seguro que deseas eliminar todo el examen?",
+    "Confirmar",
+    "¿Seguro que deseas eliminar todo el avance?",
     () => {
       state.examType = "PRESENCIAL";
 

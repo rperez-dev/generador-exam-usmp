@@ -5,8 +5,7 @@ import {
 } from "./modal.js";
 
 import {
-  hasInvalidQuestions,
-  hasEmptyExam,
+  validateExam,
 } from "./validators.js";
 
 /* =========================
@@ -172,9 +171,6 @@ function formatLongDate(dateString) {
   return `${Number(day)} DE ${months[month]} DE ${year}`;
 }
 
-/* =========================
-   GENERAR HTML PRESENCIAL
-========================= */
 /* =========================
    GENERAR HTML PRESENCIAL
 ========================= */
@@ -688,31 +684,23 @@ async function exportExam() {
      VALIDACIONES
   ========================= */
 
-  if (
-    hasEmptyExam(questions)
-  ) {
+const validation =
+  validateExam(
+    questions,
+    state.limits,
+    "EXPORT",
+  );
 
-    showAlert(
-      "Exportación cancelada",
-      "No existen preguntas para exportar.",
-    );
+if (!validation.ok) {
 
-    return;
-  }
+  showAlert(
+    validation.title,
+    validation.message,
+    
+  );
 
-  if (
-    hasInvalidQuestions(
-      questions
-    )
-  ) {
-
-    showAlert(
-      "Exportación cancelada",
-      "Existen preguntas incompletas.",
-    );
-
-    return;
-  }
+  return;
+}
 
   /* =========================
      EXPORT VIRTUAL

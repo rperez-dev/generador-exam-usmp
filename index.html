@@ -135,64 +135,76 @@
 </div>
 
 
-<!-- LOGIN -->
+<!-- =========================
+     LOGIN
+========================= -->
 
 <div
   id="loginOverlay"
-  class="login-overlay"
+  class="modal-overlay login-overlay"
 >
 
   <div class="login-card">
 
-    <h2>
-      Acceso al sistema
-    </h2>
+    <div class="modal-header">
 
-    <p>
-      Ingrese sus credenciales
-    </p>
+      <h3>
+        Acceso al Generador de Exámenes
+      </h3>
 
-    <div class="login-field">
+    </div>
 
-      <label>
-        Correo
-      </label>
+    <div class="modal-body">
 
-      <input
-        id="loginEmail"
-        type="email"
-        placeholder="correo@usmp.pe"
+      
+
+      <div class="login-field">
+
+        <label>
+          Correo
+        </label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="correo@usmp.pe"
+        >
+
+      </div>
+
+      <div class="login-field">
+
+        <label>
+          Clave
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          maxlength="6"
+          autocomplete="new-password"
+          placeholder="******"
+        >
+
+      </div>
+
+      <div
+        id="loginError"
+        class="login-error"
+      ></div>
+
+    </div>
+
+    <div class="modal-footer login-footer">
+
+      <button
+        id="loginBtn"
+        class="modal-btn primary login-btn"
       >
+        Ingresar
+      </button>
 
     </div>
-
-    <div class="login-field">
-
-      <label>
-        Clave
-      </label>
-
-      <input
-  id="loginPassword"
-  type="password"
-  maxlength="6"
-  autocomplete="new-password"
-  placeholder="******"
->
-
-    </div>
-
-    <div
-      id="loginError"
-      class="login-error"
-    ></div>
-
-    <button
-      id="loginBtn"
-      class="btn primary-btn login-btn"
-    >
-      Ingresar
-    </button>
 
   </div>
 

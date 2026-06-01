@@ -731,3 +731,89 @@ button {
   margin-bottom: 12px;
   min-height: 18px;
 }
+
+/* =========================
+   ALERT MODAL
+========================= */
+
+.modal-alert-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.modal-alert-icon {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.modal-alert-icon.warning {
+  color: #f4b400;
+}
+
+.modal-alert-content {
+  flex: 1;
+  line-height: 1.5;
+}
+
+
+/* =========================
+   VALIDATION MODAL
+========================= */
+
+.validation-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.validation-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.validation-subtitle {
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 4px;
+}
+
+.validation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  /* sangría */
+  padding-left: 14px;
+}
+
+.validation-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.validation-icon {
+  font-size: 15px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* OK */
+
+.validation-item.ok {
+  color: #16a34a;
+}
+
+/* FALTA */
+
+.validation-item.bad {
+  color: #dc2626;
+}
+
+

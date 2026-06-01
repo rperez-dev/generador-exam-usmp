@@ -1,27 +1,12 @@
-const overlay =
-  document.getElementById(
-    "modalOverlay",
-  );
+const overlay = document.getElementById("modalOverlay");
 
-const modalTitle =
-  document.getElementById(
-    "modalTitle",
-  );
+const modalTitle = document.getElementById("modalTitle");
 
-const modalMessage =
-  document.getElementById(
-    "modalMessage",
-  );
+const modalMessage = document.getElementById("modalMessage");
 
-const modalConfirm =
-  document.getElementById(
-    "modalConfirm",
-  );
+const modalConfirm = document.getElementById("modalConfirm");
 
-const modalCancel =
-  document.getElementById(
-    "modalCancel",
-  );
+const modalCancel = document.getElementById("modalCancel");
 
 /* =========================
    INIT
@@ -30,9 +15,7 @@ const modalCancel =
 function initModalState() {
   overlay.classList.add("hidden");
 
-  modalCancel.classList.add(
-    "hidden",
-  );
+  modalCancel.classList.add("hidden");
 }
 
 /* =========================
@@ -49,18 +32,48 @@ function hideModal() {
 
 function showAlert(
   title,
-  q = null,
+  content = null,
 ) {
-  modalTitle.textContent = title;
 
-  // =========================
-  // ALERTA SIMPLE
-  // =========================
+  modalTitle.textContent =
+    title;
+
+  /* =========================
+     MENSAJE HTML (VALIDATORS)
+  ========================= */
 
   if (
-    !q ||
-    typeof q !== "object"
+    typeof content ===
+    "string"
   ) {
+
+    modalMessage.innerHTML =
+      content;
+
+    modalCancel.classList.add(
+      "hidden",
+    );
+
+    overlay.classList.remove(
+      "hidden",
+    );
+
+    modalConfirm.onclick =
+      hideModal;
+
+    return;
+  }
+
+  /* =========================
+     ALERTA SIMPLE
+  ========================= */
+
+  if (
+    !content ||
+    typeof content !==
+      "object"
+  ) {
+
     modalMessage.innerHTML = `
       <div class="modal-simple-message">
         ${title}
@@ -81,96 +94,65 @@ function showAlert(
     return;
   }
 
-  // =========================
-  // MENSAJE SIMPLE CUSTOM
-  // =========================
+  /* =========================
+     VALIDACIÓN CHECKLIST
+  ========================= */
 
-  if (
-    q.statement &&
-    (!q.options ||
-      !q.options.length)
-  ) {
-    modalMessage.innerHTML = `
-      <div class="modal-simple-message">
-        ${q.statement}
-      </div>
-    `;
-
-    modalCancel.classList.add(
-      "hidden",
+  const status =
+    getQuestionStatus(
+      content,
     );
-
-    overlay.classList.remove(
-      "hidden",
-    );
-
-    modalConfirm.onclick =
-      hideModal;
-
-    return;
-  }
-
-  // =========================
-  // VALIDACIÓN COMPLETA
-  // =========================
-
-  const hasStatement =
-    q.statement?.trim?.()
-      .length > 0;
-
-  const visibleOptions =
-  q.options.slice(
-    0,
-    q.optionCount
-  );
-
-const hasOptions =
-  visibleOptions.every(
-    (o) =>
-      o &&
-      o.trim().length > 0
-  );
-
-  const hasAnswer =
-    q.correctAnswer !== null;
 
   modalMessage.innerHTML = `
-  
-    <div class="modal-checklist">
+    <div class="validation-box">
 
-      <div class="check-item ${
-        hasStatement
-          ? "ok"
-          : "bad"
-      }">
+      <div class="validation-title">
+        Complete los siguientes
+        elementos:
+      </div>
+
+      <div
+        class="validation-item
         ${
-          hasStatement
+          status.statement
+            ? "ok"
+            : "bad"
+        }"
+      >
+        ${
+          status.statement
             ? "✔"
             : "✖"
         }
         Enunciado
       </div>
 
-      <div class="check-item ${
-        hasOptions
-          ? "ok"
-          : "bad"
-      }">
+      <div
+        class="validation-item
         ${
-          hasOptions
+          status.options
+            ? "ok"
+            : "bad"
+        }"
+      >
+        ${
+          status.options
             ? "✔"
             : "✖"
         }
         Alternativas
       </div>
 
-      <div class="check-item ${
-        hasAnswer
-          ? "ok"
-          : "bad"
-      }">
+      <div
+        class="validation-item
         ${
-          hasAnswer
+          status.answer
+            ? "ok"
+            : "bad"
+        }"
+      >
+        ${
+          status.answer
             ? "✔"
             : "✖"
         }
@@ -196,23 +178,14 @@ const hasOptions =
    CONFIRM
 ========================= */
 
-function showConfirm(
-  title,
-  message,
-  onOk,
-) {
+function showConfirm(title, message, onOk) {
   modalTitle.textContent = title;
 
-  modalMessage.innerHTML =
-    message;
+  modalMessage.innerHTML = message;
 
-  modalCancel.classList.remove(
-    "hidden",
-  );
+  modalCancel.classList.remove("hidden");
 
-  overlay.classList.remove(
-    "hidden",
-  );
+  overlay.classList.remove("hidden");
 
   modalConfirm.onclick = () => {
     hideModal();
@@ -220,12 +193,7 @@ function showConfirm(
     onOk();
   };
 
-  modalCancel.onclick =
-    hideModal;
+  modalCancel.onclick = hideModal;
 }
 
-export {
-  initModalState,
-  showAlert,
-  showConfirm,
-};
+export { initModalState, showAlert, showConfirm };
