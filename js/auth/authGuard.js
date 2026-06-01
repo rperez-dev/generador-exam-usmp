@@ -24,7 +24,14 @@ import {
 ========================= */
 
 function logout() {
+
   authState.user = null;
+
+  sessionStorage.clear();
+
+  localStorage.removeItem(
+    "examUser"
+  );
 
   location.reload();
 }

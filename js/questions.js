@@ -332,6 +332,25 @@ function render() {
       };
     });
 
+    /* =========================
+   ACORDEÓN
+========================= */
+
+card.querySelector(".collapse-btn").onclick = () => {
+
+  const isCurrentlyClosed = q.collapsed;
+
+  // cerrar todas
+  state.questions.forEach((item) => {
+    item.collapsed = true;
+  });
+
+  // abrir solo la seleccionada
+  q.collapsed = !isCurrentlyClosed;
+
+  render();
+};
+
     card.querySelector(".delete-icon").onclick = () => {
       showConfirm("Eliminar", "¿Eliminar pregunta?", () => {
         state.questions = state.questions.filter((x) => x.id !== q.id);

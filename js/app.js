@@ -21,6 +21,7 @@ import {
 
 import {
   startAuth,
+  logout,
 } from "./auth/authGuard.js";
 
 /* =========================
@@ -54,11 +55,15 @@ function bindEvents() {
 
   const clearBtn = document.getElementById("clearBtn");
 
+  const logoutBtn = document.getElementById( "logoutBtn" );
+
   if (addBtn) addBtn.onclick = addQuestion;
 
   if (exportBtn) exportBtn.onclick = exportExam;
 
   if (clearBtn) clearBtn.onclick = clearExam;
+
+  if (logoutBtn) { logoutBtn.onclick = logout; }
 }
 
 /* =========================

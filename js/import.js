@@ -28,45 +28,14 @@ export function bindImport() {
   ========================= */
 
   importBtn.onclick = (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const hasQuestions = state.questions.some(
-      (q) => q.statement?.trim() || q.options.some((o) => o?.trim()),
-    );
+  fileInput.value = "";
 
-    const openImportModal = () => {
-      fileInput.value = "";
+  difficultySelect.value = "FACIL";
 
-      difficultySelect.value = "FACIL";
-
-      modal.classList.remove("hidden");
-    };
-
-    // SI EXISTE CONTENIDO
-    if (hasQuestions) {
-      showConfirm(
-        "Importar preguntas",
-        `
-        Se eliminará el examen actual
-        y todas las preguntas ingresadas.
-        ¿Deseas continuar?
-      `,
-        () => {
-          resetUI();
-
-          resetState();
-
-          render();
-
-          openImportModal();
-        },
-      );
-
-      return;
-    }
-
-    openImportModal();
-  };
+  modal.classList.remove("hidden");
+};
 
   /* =========================
      CANCELAR
