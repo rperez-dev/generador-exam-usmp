@@ -22,7 +22,7 @@ function getToday() {
 /* =========================
    RESET UI
 ========================= */
-function resetUI() {
+export function resetUI() {
 
   // INPUTS
   document.getElementById(
@@ -67,7 +67,7 @@ function resetUI() {
 /* =========================
    RESET STATE
 ========================= */
-function resetState() {
+export function resetState() {
 
   state.examType =
     "PRESENCIAL";

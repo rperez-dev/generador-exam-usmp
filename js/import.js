@@ -1,61 +1,71 @@
 import { state } from "./state.js";
 
-import {
-  render,
-} from "./questions.js";
+import { render } from "./questions.js";
+
+import { showConfirm } from "./modal.js";
+
+import { resetUI, resetState } from "./clearExam.js";
 
 /* =========================
    BIND IMPORT
 ========================= */
 
 export function bindImport() {
+  const fileInput = document.getElementById("importFile");
 
-  const fileInput =
-    document.getElementById(
-      "importFile"
-    );
+  const importBtn = document.querySelector(".import-btn");
 
-  const importBtn =
-    document.querySelector(
-      ".import-btn"
-    );
+  const modal = document.getElementById("importModal");
 
-  const modal =
-    document.getElementById(
-      "importModal"
-    );
+  const cancelBtn = document.getElementById("importCancel");
 
-  const cancelBtn =
-    document.getElementById(
-      "importCancel"
-    );
+  const continueBtn = document.getElementById("importContinue");
 
-  const continueBtn =
-    document.getElementById(
-      "importContinue"
-    );
-
-  const difficultySelect =
-    document.getElementById(
-      "importDifficulty"
-    );
+  const difficultySelect = document.getElementById("importDifficulty");
 
   /* =========================
      ABRIR MODAL
   ========================= */
 
   importBtn.onclick = (e) => {
-
     e.preventDefault();
 
-    fileInput.value = "";
-
-    difficultySelect.value =
-      "FACIL";
-
-    modal.classList.remove(
-      "hidden"
+    const hasQuestions = state.questions.some(
+      (q) => q.statement?.trim() || q.options.some((o) => o?.trim()),
     );
+
+    const openImportModal = () => {
+      fileInput.value = "";
+
+      difficultySelect.value = "FACIL";
+
+      modal.classList.remove("hidden");
+    };
+
+    // SI EXISTE CONTENIDO
+    if (hasQuestions) {
+      showConfirm(
+        "Importar preguntas",
+        `
+        Se eliminará el examen actual
+        y todas las preguntas ingresadas.
+        ¿Deseas continuar?
+      `,
+        () => {
+          resetUI();
+
+          resetState();
+
+          render();
+
+          openImportModal();
+        },
+      );
+
+      return;
+    }
+
+    openImportModal();
   };
 
   /* =========================
@@ -63,10 +73,7 @@ export function bindImport() {
   ========================= */
 
   cancelBtn.onclick = () => {
-
-    modal.classList.add(
-      "hidden"
-    );
+    modal.classList.add("hidden");
   };
 
   /* =========================
@@ -74,15 +81,10 @@ export function bindImport() {
   ========================= */
 
   continueBtn.onclick = () => {
-
-    modal.classList.add(
-      "hidden"
-    );
+    modal.classList.add("hidden");
 
     setTimeout(() => {
-
       fileInput.click();
-
     }, 120);
   };
 
@@ -90,48 +92,30 @@ export function bindImport() {
      IMPORTAR ARCHIVO
   ========================= */
 
-  fileInput.onchange =
-    async (e) => {
+  fileInput.onchange = async (e) => {
+    const file = e.target.files[0];
 
-      const file =
-        e.target.files[0];
+    if (!file) return;
 
-      if (!file) return;
+    const text = await file.text();
 
-      const text =
-        await file.text();
+    const difficulty = difficultySelect.value;
 
-      const difficulty =
-        difficultySelect.value;
+    importGift(text, difficulty);
 
-      importGift(
-        text,
-        difficulty
-      );
-
-      fileInput.value = "";
-    };
+    fileInput.value = "";
+  };
 }
 
 /* =========================
    IMPORT GIFT
 ========================= */
 
-function importGift(
-  text,
-  difficulty,
-) {
-
-  const blocks =
-    text.match(
-      /([\s\S]*?)\{([\s\S]*?)\}/g
-    );
+function importGift(text, difficulty) {
+  const blocks = text.match(/([\s\S]*?)\{([\s\S]*?)\}/g);
 
   if (!blocks) {
-
-    alert(
-      "No se encontraron preguntas válidas"
-    );
+    alert("No se encontraron preguntas válidas");
 
     return;
   }
@@ -140,12 +124,7 @@ function importGift(
      ELIMINAR PREGUNTA VACÍA
   ========================= */
 
-  if (
-    state.questions.length === 1 &&
-    !state.questions[0]
-      .statement?.trim()
-  ) {
-
+  if (state.questions.length === 1 && !state.questions[0].statement?.trim()) {
     state.questions = [];
   }
 
@@ -153,80 +132,45 @@ function importGift(
      COLAPSAR EXISTENTES
   ========================= */
 
-  state.questions.forEach(
-    (q) => {
-
-      q.collapsed = true;
-    },
-  );
+  state.questions.forEach((q) => {
+    q.collapsed = true;
+  });
 
   /* =========================
      IMPORTAR
   ========================= */
 
   blocks.forEach((block) => {
+    const parts = block.split("{");
 
-    const parts =
-      block.split("{");
+    const statement = parts[0].trim();
 
-    const statement =
-      parts[0].trim();
-
-    const answers =
-      parts[1]
-        .replace("}", "")
-        .trim()
-        .split("\n");
+    const answers = parts[1].replace("}", "").trim().split("\n");
 
     const options = [];
 
-    let correctAnswer =
-      null;
+    let correctAnswer = null;
 
-    answers.forEach(
-      (line, i) => {
+    answers.forEach((line, i) => {
+      line = line.trim();
 
-        line = line.trim();
+      if (line.startsWith("=")) {
+        correctAnswer = i;
 
-        if (
-          line.startsWith("=")
-        ) {
-
-          correctAnswer = i;
-
-          options.push(
-            line.replace(
-              /^=\s*/,
-              "",
-            )
-          );
-
-        } else if (
-          line.startsWith("~")
-        ) {
-
-          options.push(
-            line.replace(
-              /^~\s*/,
-              "",
-            )
-          );
-        }
-      },
-    );
+        options.push(line.replace(/^=\s*/, ""));
+      } else if (line.startsWith("~")) {
+        options.push(line.replace(/^~\s*/, ""));
+      }
+    });
 
     state.questions.push({
-
-      id:
-        Date.now() +
-        Math.random(),
+      id: Date.now() + Math.random(),
 
       statement,
 
       difficulty,
 
-      optionCount:
-        options.length,
+      optionCount: options.length,
 
       options,
 
@@ -244,15 +188,10 @@ function importGift(
      ACTUALIZAR LIMITES
   ========================= */
 
-  const importedCount =
-    blocks.length;
+  const importedCount = blocks.length;
 
   // reset automático
-  if (
-    state.questions.length ===
-    importedCount
-  ) {
-
+  if (state.questions.length === importedCount) {
     state.limits.FACIL = 0;
 
     state.limits.INTERMEDIO = 0;
@@ -260,39 +199,24 @@ function importGift(
     state.limits.DIFICIL = 0;
   }
 
-  state.limits[difficulty] +=
-    importedCount;
+  state.limits[difficulty] += importedCount;
 
   /* inputs visuales */
 
-  document.getElementById(
-    "easyCount"
-  ).value =
-    state.limits.FACIL;
+  document.getElementById("easyCount").value = state.limits.FACIL;
 
-  document.getElementById(
-    "mediumCount"
-  ).value =
-    state.limits.INTERMEDIO;
+  document.getElementById("mediumCount").value = state.limits.INTERMEDIO;
 
-  document.getElementById(
-    "hardCount"
-  ).value =
-    state.limits.DIFICIL;
+  document.getElementById("hardCount").value = state.limits.DIFICIL;
 
   /* =========================
      ABRIR ÚLTIMA
   ========================= */
 
-  const lastQuestion =
-    state.questions[
-      state.questions.length - 1
-    ];
+  const lastQuestion = state.questions[state.questions.length - 1];
 
   if (lastQuestion) {
-
-    lastQuestion.collapsed =
-      false;
+    lastQuestion.collapsed = false;
   }
 
   render();
