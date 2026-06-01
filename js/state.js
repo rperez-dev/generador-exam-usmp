@@ -7,6 +7,8 @@ export const state = {
 
   questions: [],
 
+  currentUser: null,
+
   limits: {
     FACIL: 20,
     INTERMEDIO: 10,

@@ -658,3 +658,76 @@ button {
     width:100%;
   }
 }
+
+
+/* =========================
+   LOGIN
+========================= */
+
+.login-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(
+    0,
+    0,
+    0,
+    0.65
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.login-card {
+  width: 420px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow:
+    0 20px 40px
+    rgba(
+      0,
+      0,
+      0,
+      0.18
+    );
+}
+
+.login-card h2 {
+  margin-bottom: 8px;
+}
+
+.login-card p {
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.login-field label {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.login-field input {
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.login-btn {
+  width: 100%;
+}
+
+.login-error {
+  color: #d32f2f;
+  font-size: 14px;
+  margin-bottom: 12px;
+  min-height: 18px;
+}

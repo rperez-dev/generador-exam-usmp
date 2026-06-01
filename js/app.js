@@ -19,6 +19,10 @@ import {
   bindImport,
 } from "./import.js";
 
+import {
+  startAuth,
+} from "./auth/authGuard.js";
+
 /* =========================
    INIT
 ========================= */
@@ -101,7 +105,12 @@ function clearExam() {
 ========================= */
 document.addEventListener(
   "DOMContentLoaded",
-  init,
+  () => {
+
+    startAuth(
+      init
+    );
+  },
 );
 
 export { clearExam };
