@@ -1,10 +1,6 @@
-import {
-  authState,
-} from "./authState.js";
+import { authState } from "./authState.js";
 
-import {
-  validateLogin,
-} from "./authService.js";
+import { validateLogin } from "./authService.js";
 
 import {
   openLogin,
@@ -15,23 +11,18 @@ import {
   loginPassword,
 } from "./authModal.js";
 
-import {
-  applyPermissions,
-} from "../permissions/permissions.js";
+import { applyPermissions } from "../permissions/permissions.js";
 
 /* =========================
    LOGOUT
 ========================= */
 
 function logout() {
-
   authState.user = null;
 
   sessionStorage.clear();
 
-  localStorage.removeItem(
-    "examUser"
-  );
+  localStorage.removeItem("examUser");
 
   location.reload();
 }
@@ -40,55 +31,33 @@ function logout() {
    START AUTH
 ========================= */
 
-function startAuth(
-  onSuccess,
-) {
-
+function startAuth(onSuccess) {
   // siempre pedir login
   openLogin();
 
-  loginBtn.onclick =
-    () => {
+  loginBtn.onclick = () => {
+    const correo = loginEmail.value.trim();
 
-      const correo =
-        loginEmail.value
-          .trim();
+    const clave = loginPassword.value.trim();
 
-      const clave =
-        loginPassword.value
-          .trim();
+    const result = validateLogin(correo, clave);
 
-      const result =
-        validateLogin(
-          correo,
-          clave,
-        );
+    if (!result.ok) {
+      setLoginError(result.message);
 
-      if (
-        !result.ok
-      ) {
+      return;
+    }
 
-        setLoginError(
-          result.message,
-        );
+    authState.user = result.user;
 
-        return;
-      }
+    closeLogin();
 
-      authState.user =
-        result.user;
+    // iniciar app
+    onSuccess();
 
-      closeLogin();
-
-      // iniciar app
-      onSuccess();
-
-      // aplicar permisos
-      applyPermissions();
-    };
+    // aplicar permisos
+    applyPermissions();
+  };
 }
 
-export {
-  startAuth,
-  logout,
-};
+export { startAuth, logout };

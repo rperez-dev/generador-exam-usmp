@@ -1,41 +1,23 @@
-const loginOverlay =
-  document.getElementById(
-    "loginOverlay"
-  );
+const loginOverlay = document.getElementById("loginOverlay");
 
-const loginEmail =
-  document.getElementById(
-    "loginEmail"
-  );
+const loginEmail = document.getElementById("loginEmail");
 
-const loginPassword =
-  document.getElementById(
-    "loginPassword"
-  );
+const loginPassword = document.getElementById("loginPassword");
 
-const loginBtn =
-  document.getElementById(
-    "loginBtn"
-  );
+const loginBtn = document.getElementById("loginBtn");
 
-const loginError =
-  document.getElementById(
-    "loginError"
-  );
+const loginError = document.getElementById("loginError");
 
 /* =========================
    CLEAR
 ========================= */
 
 function clearLoginForm() {
-
   loginEmail.value = "";
 
-  loginPassword.value =
-    "";
+  loginPassword.value = "";
 
-  loginError.textContent =
-    "";
+  loginError.textContent = "";
 }
 
 /* =========================
@@ -43,23 +25,17 @@ function clearLoginForm() {
 ========================= */
 
 function openLogin() {
-
   clearLoginForm();
 
-  loginOverlay.classList.remove(
-    "hidden"
-  );
+  loginOverlay.classList.remove("hidden");
 
   // doble limpieza contra cache browser
   setTimeout(() => {
-
     loginEmail.value = "";
 
-    loginPassword.value =
-      "";
+    loginPassword.value = "";
 
     loginEmail.focus();
-
   }, 0);
 }
 
@@ -68,24 +44,17 @@ function openLogin() {
 ========================= */
 
 function closeLogin() {
-
   clearLoginForm();
 
-  loginOverlay.classList.add(
-    "hidden"
-  );
+  loginOverlay.classList.add("hidden");
 }
 
 /* =========================
    ERROR
 ========================= */
 
-function setLoginError(
-  message
-) {
-
-  loginError.textContent =
-    message;
+function setLoginError(message) {
+  loginError.textContent = message;
 }
 
 export {

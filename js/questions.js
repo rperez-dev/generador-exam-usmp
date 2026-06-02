@@ -2,9 +2,7 @@ import { state } from "./state.js";
 
 import { showAlert, showConfirm } from "./modal.js";
 
-import {
-  validateExam,
-} from "./validators.js";
+import { validateExam } from "./validators.js";
 
 import { isDocente } from "./permissions/permissions.js";
 
@@ -336,20 +334,19 @@ function render() {
    ACORDEÓN
 ========================= */
 
-card.querySelector(".collapse-btn").onclick = () => {
+    card.querySelector(".collapse-btn").onclick = () => {
+      const isCurrentlyClosed = q.collapsed;
 
-  const isCurrentlyClosed = q.collapsed;
+      // cerrar todas
+      state.questions.forEach((item) => {
+        item.collapsed = true;
+      });
 
-  // cerrar todas
-  state.questions.forEach((item) => {
-    item.collapsed = true;
-  });
+      // abrir solo la seleccionada
+      q.collapsed = !isCurrentlyClosed;
 
-  // abrir solo la seleccionada
-  q.collapsed = !isCurrentlyClosed;
-
-  render();
-};
+      render();
+    };
 
     card.querySelector(".delete-icon").onclick = () => {
       showConfirm("Eliminar", "¿Eliminar pregunta?", () => {
@@ -371,51 +368,24 @@ card.querySelector(".collapse-btn").onclick = () => {
    ADD QUESTION
 ========================= */
 
-/* =========================
-   ADD QUESTION
-========================= */
-
-/* =========================
-   ADD QUESTION
-========================= */
-
 function addQuestion() {
+  const validation = validateExam(state.questions, state.limits, "ADD");
 
-  const validation =
-    validateExam(
-      state.questions,
-      state.limits,
-      "ADD",
-    );
-
-  if (
-    !validation.ok
-  ) {
-
-    showAlert(
-      validation.title,
-      validation.message
-    );
+  if (!validation.ok) {
+    showAlert(validation.title, validation.message);
 
     return;
   }
 
-  state.questions.forEach(
-    (q) => {
-      q.collapsed =
-        true;
-    },
-  );
+  state.questions.forEach((q) => {
+    q.collapsed = true;
+  });
 
-  const q =
-    createQuestion();
+  const q = createQuestion();
 
-  q.collapsed =
-    false;
+  q.collapsed = false;
 
-  state.questions.push(
-    q
-  );
+  state.questions.push(q);
 
   render();
 }

@@ -1,28 +1,18 @@
 import { state } from "./state.js";
 
-import {
-  render,
-  createQuestion,
-  addQuestion,
-} from "./questions.js";
+import { render, createQuestion, addQuestion } from "./questions.js";
 
 import { exportExam } from "./export.js";
 
 import { showConfirm } from "./modal.js";
 
-import {
-  bindConfig,
-  initConfig,
-} from "./config.js";
+import { bindConfig, initConfig } from "./config.js";
 
-import {
-  bindImport,
-} from "./import.js";
+import { bindImport } from "./import.js";
 
-import {
-  startAuth,
-  logout,
-} from "./auth/authGuard.js";
+import { startAuth, logout } from "./auth/authGuard.js";
+
+import { bindTour } from "./tour/tour.js";
 
 /* =========================
    INIT
@@ -39,8 +29,10 @@ function init() {
   bindEvents();
 
   bindConfig();
-  
+
   bindImport();
+  
+  bindTour();
 
   document.addEventListener("render-app", render);
 }
@@ -55,7 +47,7 @@ function bindEvents() {
 
   const clearBtn = document.getElementById("clearBtn");
 
-  const logoutBtn = document.getElementById( "logoutBtn" );
+  const logoutBtn = document.getElementById("logoutBtn");
 
   if (addBtn) addBtn.onclick = addQuestion;
 
@@ -63,7 +55,9 @@ function bindEvents() {
 
   if (clearBtn) clearBtn.onclick = clearExam;
 
-  if (logoutBtn) { logoutBtn.onclick = logout; }
+  if (logoutBtn) {
+    logoutBtn.onclick = logout;
+  }
 }
 
 /* =========================
@@ -80,9 +74,7 @@ function clearExam() {
 
       state.indicator = "";
 
-      const today = new Date()
-        .toISOString()
-        .split("T")[0];
+      const today = new Date().toISOString().split("T")[0];
 
       state.courseDate = today;
 
@@ -94,11 +86,9 @@ function clearExam() {
 
       document.getElementById("indicator").value = "";
 
-      document.getElementById("examType").value =
-        "PRESENCIAL";
+      document.getElementById("examType").value = "PRESENCIAL";
 
-      document.getElementById("courseDate").value =
-        today;
+      document.getElementById("courseDate").value = today;
 
       render();
     },
@@ -108,14 +98,8 @@ function clearExam() {
 /* =========================
    START APP
 ========================= */
-document.addEventListener(
-  "DOMContentLoaded",
-  () => {
-
-    startAuth(
-      init
-    );
-  },
-);
+document.addEventListener("DOMContentLoaded", () => {
+  startAuth(init);
+});
 
 export { clearExam };
